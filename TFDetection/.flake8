@@ -1,0 +1,5 @@
+[flake8]
+ignore = E501
+max-line-length = 200
+count = true
+exclude = object_detection, tfdetection/object_detection

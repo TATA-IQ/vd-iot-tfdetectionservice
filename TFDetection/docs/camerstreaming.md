@@ -1,7 +1,7 @@
 # Code Documentation
 
-:::camerastreaming.cache
-:::camerastreaming.streaming
-:::camerastreaming.src.parser
-:::camerastreaming.src.cameragroup
-:::camerastreaming.src.camerastream
+:::tfdetection.app
+:::tfdetection.src.image_model
+:::tfdetection.src.model_download
+:::camerastreaming.src.inference
+:::tfdetection.src.inference

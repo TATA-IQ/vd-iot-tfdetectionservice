@@ -1,3 +1,0 @@
-model_container: 2_tensorflow_person
-model_id: '2'
-port: '7000'

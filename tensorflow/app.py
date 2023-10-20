@@ -9,7 +9,13 @@ import glob2
 import numpy as np
 import requests
 import uvicorn
-import torch
+# import torch
+
+from PIL import Image
+from io import BytesIO
+import io
+import base64
+
 from src.parser import Config
 from fastapi import FastAPI
 from src.image_model import Image_Model
@@ -140,8 +146,8 @@ class SetupModel:
         model_name = modelmasterdata[0]["model_name"]
         framework = modelmasterdata[0]["model_framework"]
 
-        if torch.cuda.is_available():
-            gpu = True
+        # if torch.cuda.is_available():
+        #     gpu = True
         model_list = os.listdir("model/")
         im = InferenceModel(model_path="model/" + model_list[0] + "/saved_model", gpu=gpu)
         files = glob2.glob("model/" + model_list[0] + "/*.pbtxt")
@@ -161,11 +167,10 @@ app = FastAPI()
 
 
 def strToImage(imagestr):
-    imagencode = imagestr.encode()
-    decodedimage = base64.b64decode(imagencode)
-    nparr = np.frombuffer(decodedimage, np.uint8)
-    img_np = cv2.imdecode(nparr, flags=1)
-    return img_np
+    stream = BytesIO(imagestr.encode("ISO-8859-1"))
+    image = Image.open(stream).convert("RGB")
+    open_cv_image = np.array(image)
+    return open_cv_image
 
 
 @app.get("/test")

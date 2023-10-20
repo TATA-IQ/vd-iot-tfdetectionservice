@@ -112,7 +112,7 @@ class SetupModel:
         This function will create the api and update the endpoint url of model
         """
         ip = self.get_local_ip()
-        url = "http://" + ip + ":" + self.modelconf["port"] + "/detect"
+        url = "http://" + str(ip) + ":" + str(self.modelconf["port"]) + "/detect"
 
         model_id = self.modelconf["model_id"]
         print("updating for model id===>", model_id)

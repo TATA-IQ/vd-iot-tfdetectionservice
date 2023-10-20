@@ -9,12 +9,13 @@ import glob2
 import numpy as np
 import requests
 import uvicorn
-from config_parser.parser import Config
+import torch
+from src.parser import Config
 from fastapi import FastAPI
-from querymodel.imageModel import Image_Model
-from sftpdownload.download import SFTPClient
+from src.image_model import Image_Model
+from src.download import SFTPClient
 from src.inference import InferenceModel
-from utils_download.model_download import DownloadModel
+from src.model_download import DownloadModel
 
 
 class SetupModel:
@@ -139,7 +140,7 @@ class SetupModel:
         model_name = modelmasterdata[0]["model_name"]
         framework = modelmasterdata[0]["model_framework"]
 
-        if modelmasterdata[0]["device"] == "gpu":
+        if torch.cuda.is_available():
             gpu = True
         model_list = os.listdir("model/")
         im = InferenceModel(model_path="model/" + model_list[0] + "/saved_model", gpu=gpu)

@@ -151,6 +151,7 @@ class SetupModel:
         model_list = os.listdir("model/")
         im = InferenceModel(model_path="model/" + model_list[0] + "/saved_model", gpu=gpu)
         files = glob2.glob("model/" + model_list[0] + "/*.pbtxt")
+        print(model_list, files)
         im.read_label_map(files[0])
         im.loadmodel()
         print("====Model Loaded====")
@@ -192,11 +193,25 @@ def detection(data: Image_Model):
     """
     image = strToImage(data.image)
     print(image)
+    
+    try:
+        if data.split_columns is not None:
+            split_columns = data.split_columns
+        else:
+            split_columns = 1            
+        if data.split_rows is not None:
+            split_rows = data.split_rows
+        else:
+            split_rows = 1            
+    except:
+        split_columns = 1
+        split_rows = 1
+        
 
     if data.model_config is None:
-        res = im.infer(image)
+        res = im.infer_v2(image,split_columns,split_rows)
     else:
-        res = im.infer(image, data.model_config)
+        res = im.infer_v2(image, data.model_config,split_columns,split_rows)
     print("======inference done**********")
     print(res)
     print(type(res))

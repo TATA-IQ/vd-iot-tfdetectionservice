@@ -193,6 +193,12 @@ def detection(data: Image_Model):
     """
     image = strToImage(data.image)
     print(image)
+    final_res = {
+        "image_name":data.image_name,
+        "camera_id":data.camera_id,        
+        "model_type":data.model_type,
+        "model_framework":data.model_framework,  
+                 }
     
     try:
         if data.split_columns is not None:
@@ -213,9 +219,13 @@ def detection(data: Image_Model):
     else:
         res = im.infer_v2(image, data.model_config,split_columns,split_rows)
     print("======inference done**********")
-    print(res)
-    print(type(res))
-    return {"data": res}
+    if len(res)>0:
+        final_res['resultflag']="yes"
+    else:
+        final_res['resultflag']="no"
+
+    final_res['result']=res
+    return {"data":final_res}
 
 
 @app.get("/classes")

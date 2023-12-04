@@ -241,7 +241,7 @@ class InferenceModel:
                 sub_img = frame[i*sheight_row:(i+1)*sheight_row, j*swidth_col:(j+1)*swidth_col]                
                 # res=model.predict(sub_img)      
                 print(f"sub frame height {sub_img.shape[0]}, width {sub_img.shape[1]}")          
-                cv2.imwrite("config/"+str(i)+"_"+str(j)+".jpg",sub_img)
+                # cv2.imwrite("config/"+str(i)+"_"+str(j)+".jpg",sub_img)
 
                 image = Image.fromarray(sub_img)
                 image_np_cv = sub_img.copy()

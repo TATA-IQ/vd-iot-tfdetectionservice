@@ -25,6 +25,7 @@ Run pip install fastapi==0.99.1
 Run pip install "uvicorn[standard]"
 Run pip install protobuf==3.20.*
 Run pip install minio
+Run pip install python-consul
 copy tensorflow/app/ /app
 WORKDIR /app
 cmd ["python3","app.py"]

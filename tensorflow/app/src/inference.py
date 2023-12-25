@@ -21,21 +21,26 @@ import requests
 from imutils.video import VideoStream
 import imutils
 
+from console_logging.console import Console
+console=Console()
+
 
 class InferenceModel:
-    def __init__(self, model_path, gpu=False):
+    def __init__(self, model_path, gpu=False, logger=None):
         self.model_path = model_path
         self.model = None
         self.detect_fn = None
         self.classname= {}
         self.classes = None
+        self.log = logger
         if gpu:
             gpus = tf.config.experimental.list_physical_devices("GPU")
             for gpu in gpus:
                 tf.config.experimental.set_memory_growth(gpu, True)
 
     def loadmodel(self):
-        print("model_path====>", self.model_path)
+        self.log.info(f"model_path====>, {self.model_path}")
+        console.info(f"model_path====>, {self.model_path}")
         
         self.model = tf.saved_model.load(self.model_path)
         self.detect_fn = self.model.signatures["serving_default"]
@@ -235,12 +240,14 @@ class InferenceModel:
         sheight_row =  int(frame.shape[0]/split_row)
         det_list = []
         h,w,_=frame.shape
-        print(f"frame height {h}, width {w}")
+        console.info(f"frame height {h}, width {w}")
+        self.log.info(f"frame height {h}, width {w}")
         for i in range(0, split_row):
             for j in range(0, split_col):
                 sub_img = frame[i*sheight_row:(i+1)*sheight_row, j*swidth_col:(j+1)*swidth_col]                
                 # res=model.predict(sub_img)      
-                print(f"sub frame height {sub_img.shape[0]}, width {sub_img.shape[1]}")          
+                self.log.info(f"sub frame height {sub_img.shape[0]}, width {sub_img.shape[1]}")          
+                console.info(f"sub frame height {sub_img.shape[0]}, width {sub_img.shape[1]}")          
                 # cv2.imwrite("config/"+str(i)+"_"+str(j)+".jpg",sub_img)
 
                 image = Image.fromarray(sub_img)
@@ -308,65 +315,16 @@ class InferenceModel:
                 
     def infer_v2(self, img, model_config, split_columns=1, split_rows=1):
         image = img.copy()
-        print(split_columns, split_rows)
+        self.log.info(f"image shape===={image.shape}")
+        console.info(f"image shape===={image.shape}")
+        self.log.info(split_columns,split_rows)
+        console.info(f"columns: {split_columns},rows: {split_rows}")
         listresult = self.split(image, split_columns, split_rows, self.model)
         if len(listresult)==0:
-            print("no detections")
+            self.log.info("no detections")
+            console.info("no detections")
         else:
-            print(listresult)
+            console.info("detections")
+            self.log.info(listresult)
         return listresult
         
-        # print("=====inference starting=====")
-        # image = Image.fromarray(img)
-        # image_np_cv = img.copy()
-        # print("=====detection starting=====")
-        # det = self.object_detection(image, self.detect_fn)
-        # print("=====detection done=====")
-        # print(self.classes)
-        # print(self.classname)
-        # # print(det)
-        # listresult = []
-        # for i in range(0, len(det["detection_classes"])):
-        #     # if(det['detection_classes'][i]==1 and det['detection_scores'][i]>=0.1):
-        #     Xmin = int(image_np_cv.shape[1] * det["detection_boxes"][i][1].item())
-        #     Ymin = int(image_np_cv.shape[0] * det["detection_boxes"][i][0].item())
-        #     Xmax = int(image_np_cv.shape[1] * det["detection_boxes"][i][3].item())
-        #     Ymax = int(image_np_cv.shape[0] * det["detection_boxes"][i][2].item())
-            
-        #     clas_nm = det["detection_classes"][i].item()
-        #     score = det["detection_scores"][i].item()
-        #     # print(")))))",type(Xmin))
-        #     try:
-        #         listresult.append(
-        #             {
-        #                 "class": clas_nm,
-        #                 "class_name": self.classname[clas_nm],
-        #                 "score": score,
-        #                 "xmin": Xmin,
-        #                 "ymin": Ymin,
-        #                 "xmax": Xmax,
-        #                 "ymax": Ymax,
-        #                 "xmin_c": round(det['detection_boxes'][i][1].item(),4),
-        #                 "ymin_c": round(det['detection_boxes'][i][0].item(),4),
-        #                 "xmax_c": round(det['detection_boxes'][i][3].item(),4),
-        #                 "ymax_c": round(det['detection_boxes'][i][2].item(),4),
-                        
-        #             }
-        #         )
-        #     except UnboundLocalError:
-        #         listresult.append(
-        #             {
-        #                 "class": clas_nm,
-        #                 "class_name": self.classname[clas_nm],
-        #                 "score": score,
-        #                 "xmin": Xmin,
-        #                 "ymin": Ymin,
-        #                 "xmax": Xmax,
-        #                 "ymax": Ymax,
-        #                 "xmin_c": round(det['detection_boxes'][i][1].item(),4),
-        #                 "ymin_c": round(det['detection_boxes'][i][0].item(),4),
-        #                 "xmax_c": round(det['detection_boxes'][i][3].item(),4),
-        #                 "ymax_c": round(det['detection_boxes'][i][2].item(),4),
-        #             }
-        #         )
-        # return listresult

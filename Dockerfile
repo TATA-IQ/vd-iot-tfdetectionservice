@@ -26,6 +26,7 @@ Run pip install "uvicorn[standard]"
 Run pip install protobuf==3.20.*
 Run pip install minio
 Run pip install python-consul
+Run pip install console-logging
 copy tensorflow/app/ /app
 WORKDIR /app
 cmd ["python3","app.py"]
